@@ -5,7 +5,7 @@ local MainScene = class("MainScene", function()
 end)
 
 function MainScene:ctor()
-	
+
 	local label = cc.ui.UILabel.new({UILaberType = 2, text = "I am MainScene.", size = 14})
 					:addTo(self)
 					:align(display.CENTER, display.cx, display.cy);
@@ -14,7 +14,7 @@ end
 function MainScene:onEnter()
 	print("MainScene onEnter");
 
-    LoadingScene.start_loading("MonsterMapScene");
+    LoadingScene.start_loading("SelectRoleScene");
 end
 
 function MainScene:onExit()

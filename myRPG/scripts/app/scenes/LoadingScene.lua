@@ -2,19 +2,19 @@
 
 local scheduler = require("framework.scheduler");
 
-local LoadingScene = class("LoadingScene", function ()	
+local LoadingScene = class("LoadingScene", function ()
 	return display.newScene("LoadingScene");
 end)
 
 function LoadingScene:ctor()
-	
+
 	local ttf = cc.LabelTTF:create("loading...", "Arial", 14);
 	ttf:setPosition(display.cx, display.cy);
 	self:addChild(ttf);
 end
 
 function LoadingScene.start_loading(to_scene)
-	
+
 	LoadingScene.to_scene_ = to_scene;
 	app:enterScene("LoadingScene");
 end
@@ -23,7 +23,7 @@ function LoadingScene:onEnter()
 	print("LoadingScene onEnter");
 
 	-- delay to call fun.
-	self.hInitGameScene = scheduler.performWithDelayGlobal(handler(self, self.initGameScene), 5)
+	scheduler.performWithDelayGlobal(handler(self, self.initGameScene), 5);
 end
 
 function LoadingScene:initGameScene()
@@ -33,6 +33,8 @@ end
 function LoadingScene:onExit()
 
 	-- clean all loaded textures.
+	-- in quick final 3.3, use "cc.Director:getInstance():getTextureCache():removeAllTextures();" to delete.
+	CCTextureCache:sharedTextureCache():removeAllTextures();
 end
 
 return LoadingScene;

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>FAE93327-76FE-4A2A-B194-9B779968EE86</string>
+	<key>IDESourceControlProjectName</key>
+	<string>myrpg</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3D62E1A9922BD9CF5D21B485BD306BEBFDBDDACD</key>
+		<string>https://github.com/xianwx/myRPG.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>myRPG/proj.ios/myrpg.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3D62E1A9922BD9CF5D21B485BD306BEBFDBDDACD</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/xianwx/myRPG.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3D62E1A9922BD9CF5D21B485BD306BEBFDBDDACD</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3D62E1A9922BD9CF5D21B485BD306BEBFDBDDACD</string>
+			<key>IDESourceControlWCCName</key>
+			<string>myRPG_from_git</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,6 +1,7 @@
 
 require("config")
 require("framework.init")
+require("app.base_class.const")
 
 local MyApp = class("MyApp", cc.mvc.AppBase)
 
@@ -27,7 +28,7 @@ function MyApp:run()
                 returnValue = json.decode(str)
             end
         end
-        return returnValue 
+        return returnValue
     end, "xianwxRPGConfig", "xianwxRPG");
 
     GameData = GameState.load();

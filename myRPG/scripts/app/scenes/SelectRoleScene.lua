@@ -17,6 +17,7 @@ function SelectRoleScene:ctor()
 	print("SelectRoleScene ctor");
 	self.role_career_ = {};
 	self.nick_name_ = "";
+	self.nick_name_input_box_ = nil;
 
 	-- 按钮先是不响应点击，等选择职业过后才响应点击。
 	self.enter_game_btn = nil;
@@ -81,11 +82,14 @@ function SelectRoleScene:init()
 
 	edit_box:setFontSize(20);
 	edit_box:setFontName("黑体");
+	edit_box:setColor(cc.c3b(0, 0, 0));
 	edit_box:setPlaceHolder("请输入你的名字");
 	edit_box:setPlaceholderFontColor(cc.c3b(0, 0, 0));
 	edit_box:setInputMode(kEditBoxInputModeAny);
     edit_box:setReturnType(kKeyboardReturnTypeDone);
     self:addChild(edit_box);
+    self.nick_name_input_box_ = edit_box;
+
 	-- 进入游戏按钮
 	local ENTER_GAME_BTN_IMAGES = {
 		normal = "common/button_green_216x64.png",
@@ -108,19 +112,37 @@ end
 function SelectRoleScene:enter_btn_clicked()
 	-- print("enter_btn_clicked");
 
-	-- if self.nick_name_ and self.nick_name_ ~= "" then
-	-- 	-- todo
-	-- else
-	-- 	-- 提示未输入名字，将循环一个，让玩家确认
-	-- end
+	if self.nick_name_ and self.nick_name_ ~= "" then
+		-- todo
+	else
+		-- 提示未输入名字，将随机一个，让玩家确认
+		local messagelayer = require("app.game_ui.MessageBoxLayer").new({
+					confirm_callback = handler(self, self.enter_game_with_random_name),
+					confirm_callback_param = nil,
+					cancel_callback = nil,
+					cancel_callback_param = nil,
+					contents_text = "未输入名字，将随机生成一个，确定吗？",
+					title_text = "提示"
+					}):addTo(self);
+	end
+end
 
-	local messagelayer = require("app.game_ui.MessageBoxLayer").new({labelText="交易失败",
-					confirmCallback = nil ,
-					confirmParams = nil,
-					shop = "diamond",
-					isEnough = nil,
-					onlyConfirm=true
-					}):addTo(self)
+function SelectRoleScene:enter_game_with_random_name()
+	-- 随机一个名字，然后进入游戏
+	self.nick_name_ = self:random_nick_name();
+
+	self:enter_game(self.nick_name_);
+end
+
+function SelectRoleScene:enter_game(param)
+	-- param参数有姓名，所选职业等
+
+	-- 先保存一下数据
+	GameData.nick_name = self.nick_name_;
+	self.nick_name_input_box_:setText(self.nick_name_);
+	GameState.save(GameData);
+
+	-- todo 进入游戏
 end
 
 function SelectRoleScene:on_edit_box_began(edit_box)

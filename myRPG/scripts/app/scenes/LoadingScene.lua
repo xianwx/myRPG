@@ -7,6 +7,9 @@ end)
 
 function LoadingScene:ctor()
 
+	local bg_img = display.newSprite("map/loading.jpg", display.cx, display.cy);
+	self:addChild(bg_img, -1);
+
 	local ttf = cc.LabelTTF:create("loading...", "Arial", 30);
 	ttf:setPosition(display.cx, 20);
 	self:addChild(ttf);

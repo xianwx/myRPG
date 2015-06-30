@@ -35,7 +35,7 @@ function Figure:ctor()
 	self.m_hair_ = 0;
 	self.m_weapon_ = 0;
 	self.m_hair_sprite_ = nil;
-	self.m_weapon_sptite_ = nil;
+	self.m_weapon_sprite_ = nil;
 
 	-- 创建出来默认的状态和朝向
 	self.m_state_ = FigureState.STAND;
@@ -46,16 +46,45 @@ end
 
 -- 设置头发
 function Figure:set_hair(hair_num)
-	self.m_hair_ = hair_num;
 
-	-- todo,根据num创建sprite
+	-- 如果已经有头发的存在，则重置
+	if self.m_hair_sprite_ then
+		self.m_hair_ = 0;
+		self.m_hair_sprite_:removeFromParent();
+		self.m_hair_sprite_ = nil;
+	end
+
+	-- todo 判断一下，如果是怪物则不创建头发（因为怪物全是动物）
+
+	-- todo 因为命名问题，hair_num 需要先转换一下
+
+	self.m_hair_sprite_ = CCSprite:create();
+	self.m_hair_sprite_:setPosition(128 * 0.8, 128 * 0.8);
+	self:addChild(self.m_hair_sprite_, 1, "hair");
+
+	-- 交予update的时候再图片指定上去
 end
 
 -- 设置武器
 function Figure:set_weapon(weapon_num)
+
+	-- 如果已经有武器的存在，则重置
+	if self.m_weapon_sprite_ then
+		self.m_weapon_ = 0;
+		self.m_weapon_sprite_:removeFromParent();
+		self.m_weapon_sprite_ = nil;
+	end
+
+	-- todo 如果是怪物，则不加上武器（因为怪物都是动物）
+
+	-- 记录weapon的值
 	self.m_weapon_ = weapon_num;
 
-	-- todo,根据num创建srpite
+	self.m_weapon_sprite_ = CCSprite:create();
+	self.m_weapon_sprite_:setPosition(128 * 0.8, 128 * 0.8);
+	self:addChild(self.m_weapon_sprite_, 1, "weapon");
+
+	-- 交予update函数将图片加上
 end
 
 -- 设置状态和方向
@@ -63,7 +92,21 @@ function Figure:set_direction_and_state(state, direction)
 	self.m_state_ = state;
 	self.m_direction_ = direction;
 
-	self:update_myself();
+	local changed = false;
+
+	if state and state ~= FigureState.NONE and state ~= self.m_state_ then
+		self.m_state_ = state;
+		changed = true;
+	end
+
+	if direction and direction ~= FigureDirection.NONE and direction ~= self.m_direction_ then
+		self.m_direction_ = direction;
+		changed = true;
+	end
+
+	if changed then
+		self:update_myself();
+	end
 end
 
 function Figure:update_myself()

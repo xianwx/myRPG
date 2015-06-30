@@ -27,9 +27,9 @@ end
 function SelectRoleScene:init()
 	-- 创建几个职业的人物图片
 
-	-- 创建个偏白色的背景
-	local layer_color_bg = CCLayerColor:create(ccc4(140, 150, 180, 255), display.width, display.height);
-	self:addChild(layer_color_bg, -1);
+	-- 创建背景图片
+	local bg_img = display.newSprite("map/loading.jpg", display.cx, display.cy);
+	self:addChild(bg_img);
 
 	-- 创建职业人物描述
 	local description_label = cc.ui.UILabel.new({
@@ -92,16 +92,16 @@ function SelectRoleScene:init()
 
 	-- 进入游戏按钮
 	local ENTER_GAME_BTN_IMAGES = {
-		normal = "common/button_green_216x64.png",
-        pressed = "common/button_grey_216x64.png",
-        disabled = "common/button_grey_216x64.png",
+		normal = "ui/role_create/GUI/button.png",
+        pressed = nil,
+        disabled = nil,
 	};
 
 	local enter_game_btn = cc.ui.UIPushButton.new(ENTER_GAME_BTN_IMAGES, { scale9 = true });
 	enter_game_btn:setButtonLabel("normal", cc.ui.UILabel.new({text = "进入游戏", size = 25, fontName = "黑体"}));
-	enter_game_btn:setButtonSize(150, 80);
+	enter_game_btn:setButtonSize(120, 60);
 	enter_game_btn:setAnchorPoint(0.5, 0.5);
-	enter_game_btn:setPosition(500, 380);
+	enter_game_btn:setPosition(910, 80);
 	enter_game_btn:setColor(ccc3(127, 127, 127));
     enter_game_btn:setTouchEnabled(true);
     enter_game_btn:onButtonClicked(handler(self, self.enter_btn_clicked));

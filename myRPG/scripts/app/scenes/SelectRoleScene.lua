@@ -8,9 +8,14 @@
 -- 保存玩家数据
 -- 连接进入游戏（不联网单机）
 
+local figure_id = {11001, 11002, 12001, 12002, 13001, 13002, 14001, 14002, 15001, 15002, 16001, 16002};
+local hair_id = {1000, 1000, 1100, 1100, 1200, 1200};
+
 local SelectRoleScene = class("SelectRoleScene", function()
 	return display.newScene("SelectRoleScene");
 end)
+
+local Figure = require("app.base_class.Figure");
 
 function SelectRoleScene:ctor()
 	-- Players can choose careers‘
@@ -107,6 +112,38 @@ function SelectRoleScene:init()
     enter_game_btn:onButtonClicked(handler(self, self.enter_btn_clicked));
     self:addChild(enter_game_btn);
     self.enter_game_btn = enter_game_btn;
+
+    local size_btn = cc.size(120, 200);
+
+    local pt = {
+        cc.p(115, 320),
+        cc.p(268, 320),
+        cc.p(403, 320),
+        cc.p(556, 320),
+        cc.p(691, 320),
+        cc.p(844, 320)
+    };
+
+    for i = 1, 6 do
+        local btn = cc.ui.UIPushButton.new({ normal = nil, pressed = nil, disabled = nil, }, {scale9 = true});
+        btn:setAnchorPoint(0.5, 0.5);
+        btn:setButtonSize(size_btn.width, size_btn.height);
+        btn:setPosition(cc.PointAdd(cc.p(0, 0), pt[i]));
+        btn:setTag(figure_id[i]);
+        btn:onButtonClicked(handler(self, self.play_selected_action));
+        self:addChild(btn);
+
+        local monomer = Figure.new(Texture_type_path.Figure, figure_id[i]);
+        monomer:set_hair(hair_id[i]);
+        monomer:set_weapon(1000);
+        monomer:setColor(ccc3(127, 127, 127));
+        btn:addChild(monomer);
+        -- table.insert(self.m_arrRole, monomer);
+    end
+end
+
+function SelectRoleScene:play_selected_action(event)
+	-- body
 end
 
 function SelectRoleScene:enter_btn_clicked()

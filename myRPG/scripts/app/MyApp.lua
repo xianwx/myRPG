@@ -1,7 +1,7 @@
 
 require("config")
 require("framework.init")
-require("app.base_class.const")
+require("app.base_class.Const")
 
 local MyApp = class("MyApp", cc.mvc.AppBase)
 
@@ -34,21 +34,7 @@ function MyApp:run()
     GameData = GameState.load();
 
     dump(GameData, "GameData: ");
-
-    if not GameData then
-        self:init_user_data();
-    end
-
     self:enterScene("MainScene");
-end
-
-function MyApp:init_user_data()
-    GameData = {
-            user_name = "test1",
-            user_level = "1",
-        };
-
-    GameState.save(GameData);
 end
 
 return MyApp

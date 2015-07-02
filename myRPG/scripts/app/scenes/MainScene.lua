@@ -1,4 +1,5 @@
 local LoadingScene = require("app.scenes.LoadingScene");
+local TextureController = require("app.base_class.TextureController")
 
 local MainScene = class("MainScene", function()
     return display.newScene("MainScene")
@@ -12,9 +13,11 @@ function MainScene:ctor()
 end
 
 function MainScene:onEnter()
-	print("MainScene onEnter");
-
-    LoadingScene.start_loading("SelectRoleScene");
+	if GameData ~= nil then
+		LoadingScene.start_loading("SafeMapScene");
+	else
+		LoadingScene.start_loading("SelectRoleScene");
+	end
 end
 
 function MainScene:onExit()

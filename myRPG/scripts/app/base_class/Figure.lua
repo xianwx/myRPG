@@ -36,7 +36,7 @@ local Figure = class("Figure", function ()
 	return display.newSprite();
 end);
 
-function Figure:ctor(texture_type, figure_num)
+function Figure:ctor()
 	self.m_hair_ = 0;
 	self.m_weapon_ = 0;
 	self.m_hair_sprite_ = nil;
@@ -47,13 +47,22 @@ function Figure:ctor(texture_type, figure_num)
 	self.m_direction_ = FigureDirection.DOWN;
 
 	-- 纹理的种类（人物的种类）
-	self.m_texture_type_ = texture_type;
-	self.m_figure_num_ = figure_num;
+	self.m_texture_type_ = DEFAULT_FIGURE_TYPE;
+	self.m_figure_num_ = DEFAULT_FIGURE_NUM;
 
 	-- 人物的转率？
 	self.m_rate_ = 0.5;
 
 	self.m_hp_ = 0;
+end
+
+-- 设置种类和具体的人物
+function Figure:set_texture_type_and_num(texture_type, figure_num)
+
+	self.m_texture_type_ = texture_type;
+	self.m_figure_num_ = figure_num;
+
+    TextureController.add_sprite_frame(self.m_texture_type_, self.m_figure_num_, handler(self, self.update_myself));
 end
 
 -- 设置头发
@@ -70,15 +79,14 @@ function Figure:set_hair(hair_num)
 		return;
 	end
 
-	-- todo 因为命名问题，hair_num 需要先转换一下
+	-- 因为命名问题，hair_num 需要先转换一下
 	self.m_hair_ = hair_num * 10 + self.m_figure_num_ % 10;
-    TextureController.add_sprite_frame(Texture_type_path.HAIR, self.m_hair_, handler(self, self.update_myself));
-
 	self.m_hair_sprite_ = CCSprite:create();
 	self.m_hair_sprite_:setPosition(128 * 0.8, 128 * 0.8);
 	self:addChild(self.m_hair_sprite_, 1, 999);
 
-	-- 交予update的时候再图片指定上去
+	-- 创建图片
+	TextureController.add_sprite_frame(Texture_type_path.HAIR, self.m_hair_, handler(self, self.update_myself));
 end
 
 -- 设置武器
@@ -97,13 +105,12 @@ function Figure:set_weapon(weapon_num)
 
 	-- 记录weapon的值
 	self.m_weapon_ = weapon_num;
-	TextureController.add_sprite_frame(Texture_type_path.WEAPON, self.m_weapon_, handler(self, self.update_myself));
-
 	self.m_weapon_sprite_ = CCSprite:create();
 	self.m_weapon_sprite_:setPosition(128 * 0.8, 128 * 0.8);
 	self:addChild(self.m_weapon_sprite_, 1, 888);
 
-	-- 交予update函数将图片加上
+	-- 创建图片
+	TextureController.add_sprite_frame(Texture_type_path.WEAPON, self.m_weapon_, handler(self, self.update_myself));
 end
 
 -- 设置状态和方向
@@ -129,7 +136,7 @@ function Figure:set_direction_and_state(state, direction)
 end
 
 local function get_frame_rate(state, frame_type)
-    local frame_rate = 0
+    local frame_rate = 0;
 
     if (frame_type == Texture_type_path.FIGURE) then
         if (state == FigureState.STAND) then
@@ -326,6 +333,28 @@ function Figure:death(...)
 	self.m_hp_ = 0;
 
 	-- todo 播放死亡特效
+end
+
+-- 获取头发数值
+function Figure:get_hair()
+	return self.m_hair_;
+end
+
+-- 获取武器数值
+function Figure:get_weapon()
+	return self.m_weapon_;
+end
+
+-- 停止特效
+function Figure:stop_all_actions()
+
+	if self.m_hair_sprite_ then
+		self.m_hair_sprite_:stopAllActions();
+	end
+
+	if self.m_weapon_sprite_ then
+		self.m_weapon_sprite_:stopAllActions();
+	end
 end
 
 return Figure;

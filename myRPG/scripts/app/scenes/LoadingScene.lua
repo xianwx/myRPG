@@ -25,10 +25,11 @@ function LoadingScene:onEnter()
 	print("LoadingScene onEnter");
 
 	-- delay to call fun.
-	scheduler.performWithDelayGlobal(handler(self, self.initGameScene), 2);
+	scheduler.performWithDelayGlobal(handler(self, self.initGameScene), 1);
 end
 
 function LoadingScene:initGameScene()
+	print("to_scene: ", self.to_scene_);
 	app:enterScene(self.to_scene_, nil, "fade", 1);
 end
 

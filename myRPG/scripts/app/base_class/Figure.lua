@@ -38,6 +38,7 @@ end);
 
 function Figure:ctor()
 	self.m_hair_ = 0;
+	self.m_hair_num_ = 0;
 	self.m_weapon_ = 0;
 	self.m_hair_sprite_ = nil;
 	self.m_weapon_sprite_ = nil;
@@ -71,6 +72,7 @@ function Figure:set_hair(hair_num)
 	-- 如果已经有头发的存在，则重置
 	if self.m_hair_sprite_ then
 		self.m_hair_ = 0;
+		self.m_hair_num_ = 0;
 		self.m_hair_sprite_:removeFromParent();
 		self.m_hair_sprite_ = nil;
 	end
@@ -80,6 +82,7 @@ function Figure:set_hair(hair_num)
 	end
 
 	-- 因为命名问题，hair_num 需要先转换一下
+	self.m_hair_num_ = hair_num;
 	self.m_hair_ = hair_num * 10 + self.m_figure_num_ % 10;
 	self.m_hair_sprite_ = CCSprite:create();
 	self.m_hair_sprite_:setPosition(128 * 0.8, 128 * 0.8);
@@ -115,9 +118,6 @@ end
 
 -- 设置状态和方向
 function Figure:set_direction_and_state(state, direction)
-	self.m_state_ = state;
-	self.m_direction_ = direction;
-
 	local changed = false;
 
 	if state and state ~= FigureState.NONE and state ~= self.m_state_ then
@@ -337,7 +337,7 @@ end
 
 -- 获取头发数值
 function Figure:get_hair()
-	return self.m_hair_;
+	return self.m_hair_num_;
 end
 
 -- 获取武器数值
@@ -345,6 +345,10 @@ function Figure:get_weapon()
 	return self.m_weapon_;
 end
 
+-- 获取选择的玩家
+function Figure:get_figure_num()
+	return self.m_figure_num_;
+end
 -- 停止特效
 function Figure:stop_all_actions()
 

@@ -20,3 +20,7 @@ function ToolUtil.message_box_animation(param)
 
 
 end
+
+function ToolUtil.get_z_order_zero(map_size)
+	return (-map_size.height / 10.0);
+end

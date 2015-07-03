@@ -212,6 +212,7 @@ function SelectRoleScene:enter_game()
 	GameData.level = 1;
 	GameData.hair = self.m_select_role_:get_hair();
 	GameData.weapon = self.m_select_role_:get_weapon();
+	GameData.figure = self.m_select_role_:get_figure_num();
 	self.nick_name_input_box_:setText(self.nick_name_);
 	GameState.save(GameData);
 

@@ -2,6 +2,7 @@
 require("config")
 require("framework.init")
 require("app.base_class.Const")
+require("app.base_class.ToolUtil")
 
 local MyApp = class("MyApp", cc.mvc.AppBase)
 

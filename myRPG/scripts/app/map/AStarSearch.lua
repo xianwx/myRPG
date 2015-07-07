@@ -1,0 +1,3 @@
+-- AStarSearch.lua
+-- A*寻路算法
+-- created by xianwx, 2015-07-07 16:53:15

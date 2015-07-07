@@ -21,17 +21,6 @@ local OTHER_ROUTE = "texture_set/"			 -- 大概是NPC图片文件夹路径
 local textureSuffix = ".plist"				 -- 描述文件后缀名
 local texturePngSuffix = ".png"				 -- 图片格式
 
-Texture_type_path = {
-	FIGURE = 1,
-    MONSTER = 2,
-    HAIR = 3,
-    WEAPON = 4,
-    SKILLCASTER = 5,
-    SKILLLOCUS = 6,
-    SKILLEXPLOSION = 7,
-    NONE = 0
-};
-
 local TextureController = class("TextureController");
 
 function TextureController:ctor()

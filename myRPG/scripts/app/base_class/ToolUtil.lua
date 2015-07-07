@@ -24,3 +24,55 @@ end
 function ToolUtil.get_z_order_zero(map_size)
 	return (-map_size.height / 10.0);
 end
+
+-- 赋值
+function ToolUtil.set(left, right)
+    left.x = right.x
+    left.z = right.z
+    return left
+end
+
+-- 相加
+function ToolUtil.add(left, right)
+    return ToolUtil.new(left.x + right.x, left.z + right.z)
+end
+
+-- 相减
+function ToolUtil.sub(left, right)
+    return ToolUtil.new(left.x - right.x, left.z - right.z)
+end
+
+-- 负号
+function ToolUtil.minus(self)
+    return ToolUtil.new(-self.x, -self.z)
+end
+
+-- 乘以一个数
+function ToolUtil.mul(self, a)
+    return ToolUtil.new(self.x * a, self.z * a)
+end
+
+-- 除以一个数
+function ToolUtil.div(self, a)
+    error(a, "CCPoint division by 0.");
+    return ToolUtil.new(self.x / a, self.z / a)
+end
+
+-- 小于
+function ToolUtil.less(left, right)
+    local a = left.x * 65536 + left.z
+    local b = right.x * 65536 + right.z
+    return (a < b)
+end
+
+-- 相等
+function ToolUtil.equals(left, right)
+    local a = left.x * 65536 + left.z
+    local b = right.x * 65536 + right.z
+    return (a == b)
+end
+
+-- 对象值相等
+function ToolUtil.equals_obj(left, right)
+    return (left.x == right.x and left.z == right.z)
+end

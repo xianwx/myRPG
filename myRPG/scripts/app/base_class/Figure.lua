@@ -1,36 +1,9 @@
 -- Figure.lua
--- 人物基类，包括玩家，NPC，怪物。
+-- 人物纹理以及动画基类
 -- created by xianwx, 2015-06-30 13:57:29
 
 local scheduler = require("framework.scheduler");
 local TextureController = require("app.base_class.TextureController");
-
--- 人物的状态
-FigureState = {
-	DEATH     = 7,  -- 死亡
-    HURT      = 6,  -- 伤害
-    CASTING   = 5,  -- 投掷
-    ATTACK    = 4,  -- 攻击
-    RUN       = 3,  -- 跑
-    WALK      = 2,  -- 走
-    STAND     = 1,  -- 站立
-    NONE      = -1
-};
-
--- 人物的朝向
-FigureDirection = {
-	UP              = 8,    -- 上
-    LEFTANDUP       = 7,    -- 左上
-    LEFT            = 6,    -- 左
-    LEFTANDDOWN     = 5,    -- 左下
-    DOWN            = 4,    -- 下
-    RIGHTANDDOWN    = 3,    -- 右下
-    RIGHT           = 2,    -- 右
-    RIGHTANDUP      = 1,    -- 右上
-    NONE            = 0
-}
-
-local TAG_ANIMATE = 123456;
 
 local Figure = class("Figure", function ()
 	return display.newSprite();
@@ -345,10 +318,21 @@ function Figure:get_weapon()
 	return self.m_weapon_;
 end
 
+-- 跑步特效
+function Figure:running_move_action()
+
+end
+
+-- 走路特效
+function Figure:walk_move_action()
+
+end
+
 -- 获取选择的玩家
 function Figure:get_figure_num()
 	return self.m_figure_num_;
 end
+
 -- 停止特效
 function Figure:stop_all_actions()
 
@@ -361,4 +345,13 @@ function Figure:stop_all_actions()
 	end
 end
 
+function Figure:getAnchorPointWithFoot()
+    local x = self:getContentSize().width / 2 / self:getContentSize().width
+    local y = (self:getContentSize().height - 120) / self:getContentSize().height
+    return cc.p(x, y)
+end
+
+function Figure:setDelegate(delegate)
+    self.m_delegate_ = delegate;
+end
 return Figure;

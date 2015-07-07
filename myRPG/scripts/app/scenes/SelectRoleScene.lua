@@ -21,12 +21,12 @@ local Figure = require("app.base_class.Figure");
 function SelectRoleScene:ctor()
 	-- Players can choose careers‘
 	print("SelectRoleScene ctor");
-	self.role_career_ = {};
-	self.nick_name_ = "";
-	self.nick_name_input_box_ = nil;
+	self.m_role_career_ = {};
+	self.m_nick_name_ = "";
+	self.m_nick_name_input_box_ = nil;
 
 	-- 按钮先是不响应点击，等选择职业过后才响应点击。
-	self.enter_game_btn = nil;
+	self.m_enter_game_btn_ = nil;
 
 	-- 目前选中的职业
 	self.m_select_role_ = nil;
@@ -97,7 +97,7 @@ function SelectRoleScene:init()
 	edit_box:setInputMode(kEditBoxInputModeAny);
     edit_box:setReturnType(kKeyboardReturnTypeDone);
     self:addChild(edit_box);
-    self.nick_name_input_box_ = edit_box;
+    self.m_nick_name_input_box_ = edit_box;
 
 	-- 进入游戏按钮
 	local ENTER_GAME_BTN_IMAGES = {
@@ -115,7 +115,7 @@ function SelectRoleScene:init()
     enter_game_btn:setTouchEnabled(false);
     enter_game_btn:onButtonClicked(handler(self, self.enter_btn_clicked));
     self:addChild(enter_game_btn);
-    self.enter_game_btn = enter_game_btn;
+    self.m_enter_game_btn_ = enter_game_btn;
 
     local size_btn = cc.size(120, 200);
 
@@ -143,7 +143,7 @@ function SelectRoleScene:init()
         monomer:set_weapon(weapon_id[i]);
         monomer:setColor(ccc3(127, 127, 127));
         btn:addChild(monomer);
-        table.insert(self.role_career_, monomer);
+        table.insert(self.m_role_career_, monomer);
     end
 end
 
@@ -163,11 +163,11 @@ function SelectRoleScene:play_selected_action(event)
 		end
 
 		local button;
-		for i = 1, #self.role_career_ do
-			button = self.role_career_[i]:getParent();
+		for i = 1, #self.m_role_career_ do
+			button = self.m_role_career_[i]:getParent();
 
 			if button == btn then
-				self.m_select_role_ = self.role_career_[i];
+				self.m_select_role_ = self.m_role_career_[i];
 				break;
 			end
 		end
@@ -176,15 +176,15 @@ function SelectRoleScene:play_selected_action(event)
 		scale_to = cc.ScaleTo:create(1, 1.2);
 		self.m_select_role_:runAction(scale_to);
 
-		if self.enter_game_btn then
-			self.enter_game_btn:setColor(ccc3(255, 255, 255));
-			self.enter_game_btn:setTouchEnabled(true);
+		if self.m_enter_game_btn_ then
+			self.m_enter_game_btn_:setColor(ccc3(255, 255, 255));
+			self.m_enter_game_btn_:setTouchEnabled(true);
 		end
 	end
 end
 
 function SelectRoleScene:enter_btn_clicked()
-	if self.nick_name_ and self.nick_name_ ~= "" then
+	if self.m_nick_name_ and self.m_nick_name_ ~= "" then
 		self:enter_game();
 	else
 		-- 提示未输入名字，将随机一个，让玩家确认
@@ -201,19 +201,19 @@ end
 
 function SelectRoleScene:enter_game_with_random_name()
 	-- 随机一个名字，然后进入游戏
-	self.nick_name_ = self:random_nick_name();
+	self.m_nick_name_ = self:random_nick_name();
 
 	self:enter_game();
 end
 
 function SelectRoleScene:enter_game()
 	-- 先保存一下数据
-	GameData.nick_name = self.nick_name_;
+	GameData.nick_name = self.m_nick_name_;
 	GameData.level = 1;
 	GameData.hair = self.m_select_role_:get_hair();
 	GameData.weapon = self.m_select_role_:get_weapon();
 	GameData.figure = self.m_select_role_:get_figure_num();
-	self.nick_name_input_box_:setText(self.nick_name_);
+	self.m_nick_name_input_box_:setText(self.m_nick_name_);
 	GameState.save(GameData);
 
 	-- 进入游戏
@@ -225,7 +225,7 @@ function SelectRoleScene:on_edit_box_began(edit_box)
 end
 
 function SelectRoleScene:on_edit_box_ended(edit_box)
-	self.nick_name_ = edit_box:getText();
+	self.m_nick_name_ = edit_box:getText();
 	print("In func box_ended, edit_box_text: ", edit_box:getText());
 end
 

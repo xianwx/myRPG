@@ -60,3 +60,13 @@ TAG_COOLINGTIMEATTACK = 0xfffff3;
 TAG_MOVETWAIT = 0xfffff4;
 TAG_ANIMATE = 0xfffff5;
 
+-- 混沌点(不可到达)
+DISORDER = 1;
+
+-- A星寻路的状态
+SEARCH_STATE_NOT_INITIALISED = 1;   -- 寻路未初始化
+SEARCH_STATE_INVALID = 2;           -- 寻路无效
+SEARCH_STATE_OUT_OF_MEMORY = 3;     -- 寻路溢出
+SEARCH_STATE_SEARCHING = 4;         -- 正在寻路
+SEARCH_STATE_SUCCESSED = 5;         -- 寻路成功
+SEARCH_STATE_FAILED = 6;            -- 寻路失败

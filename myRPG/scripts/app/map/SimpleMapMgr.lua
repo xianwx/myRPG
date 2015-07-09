@@ -5,7 +5,7 @@ local SimpleMapMgr = class("SimpleMapMgr", function ()
 	return display.newNode();
 end);
 
-local MapFloorTile = require("app.game_ui.MapFloorTile");
+local MapFloorTile = require("app.map.MapFloorTile");
 
 function SimpleMapMgr:ctor()
 

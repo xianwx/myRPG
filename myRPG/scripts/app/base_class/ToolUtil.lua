@@ -73,6 +73,58 @@ function ToolUtil.equals(left, right)
 end
 
 -- 对象值相等
-function ToolUtil.equals_obj(left, right)
-    return (left.x == right.x and left.z == right.z)
+function ToolUtil.equal_map_point(left, right)
+    return (left.x == right.x and left.y == right.y)
+end
+
+-- 寻路状态未在定义中
+function ToolUtil.a_star_search_state_no_define(state)
+    if type(state) ~= "number" then
+        return false;
+    end
+
+    return (state < SEARCH_STATE_NOT_INITIALISED) or (state > SEARCH_STATE_FAILED);
+end
+
+-- 堆栈的操作
+-- 往堆栈里加入元素
+function ToolUtil.push_heap(array, first, last)
+    make(array, first, last);
+end
+
+-- 往堆栈里弹出元素
+function ToolUtil.pop_heap(array, first, last)
+    array[first], array[last] = array[last], array[first];
+    make_heap(array, first, last - 1);
+end
+
+-- 对A星寻路的堆栈进行筛选
+function ToolUtil.sift_heap(array, first, last)
+    local i = first;             -- 被筛选结点索引
+    local j = 2 * i;             -- 被筛选结点的左孩子索引
+    local temp = array[i];       -- 保存被筛选结点
+
+    while (j <= last) do
+        if (j < last and array[j].f > array[j + 1].f) then
+            j = j + 1 ;          -- 若右孩子较小，把j指向右孩子
+        end
+
+        if (temp.f > array[j].f) then
+            array[i] = array[j]; -- 将array[j]调整到双亲结点位置上
+            i = j;               -- 修改i和j值，指向下一个被筛选结点和被筛选结点的左孩子
+            j = 2 * i;
+        else
+            break;               -- 已是小根堆，筛选结束
+        end
+    end
+
+    array[i] = temp;             -- 被筛选结点的值放入最终位置
+end
+
+-- 创造一个堆栈元素
+function ToolUtil.make_heap(array, first, last)
+    local n = last - first + 1;
+    for i = math.floor(n / 2), 1, -1 do
+        sift_heap(array, i, n);
+    end
 end

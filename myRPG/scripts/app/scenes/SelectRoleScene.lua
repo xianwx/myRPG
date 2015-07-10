@@ -188,14 +188,16 @@ function SelectRoleScene:enter_btn_clicked()
 		self:enter_game();
 	else
 		-- 提示未输入名字，将随机一个，让玩家确认
-		local messagelayer = require("app.game_ui.MessageBoxLayer").new({
-					confirm_callback = handler(self, self.enter_game_with_random_name),
-					confirm_callback_param = nil,
-					cancel_callback = nil,
-					cancel_callback_param = nil,
-					contents_text = "未输入名字，将随机生成一个，确定吗？",
-					title_text = "提示"
-					}):addTo(self);
+		-- local messagelayer = require("app.game_ui.MessageBoxLayer").new({
+		-- 			confirm_callback = handler(self, self.enter_game_with_random_name),
+		-- 			confirm_callback_param = nil,
+		-- 			cancel_callback = nil,
+		-- 			cancel_callback_param = nil,
+		-- 			contents_text = "未输入名字，将随机生成一个，确定吗？",
+		-- 			title_text = "提示"
+		-- 			}):addTo(self);
+
+		self:enter_game_with_random_name();
 	end
 end
 
@@ -208,6 +210,10 @@ end
 
 function SelectRoleScene:enter_game()
 	-- 先保存一下数据
+	if GameData == nil then
+		GameData = {};
+	end
+
 	GameData.nick_name = self.m_nick_name_;
 	GameData.level = 1;
 	GameData.hair = self.m_select_role_:get_hair();

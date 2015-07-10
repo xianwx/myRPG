@@ -8,6 +8,8 @@
 local SimpleMapMgr = require("app.map.SimpleMapMgr");
 local Figure = require("app.base_class.Figure");
 local Player = require("app.base_class.Player");
+local AStarPath = require("app.map.AStarPath");
+local MapPoint = require("app.map.MapPoint");
 
 local SafeMapScene = class("SafeMapScene", function ()
 	return display.newScene("SafeMapScene");
@@ -37,6 +39,8 @@ function SafeMapScene:onEnter()
 		g_player = self.m_player_;
 	end
 
+	g_cur_map = self;
+
 	self.m_touch_layer_ = display.newLayer();
 	self.m_touch_layer_:addNodeEventListener(cc.NODE_TOUCH_EVENT, function (event)
 		if event.name == "began" then
@@ -49,7 +53,7 @@ function SafeMapScene:onEnter()
 			self:on_touch_cancel(event);
 		end
 	end)
-
+	self.m_touch_layer_:setTouchEnabled(true);
 	self:addChild(self.m_touch_layer_, -10000);
 
 	self.m_player_is_on_moving_action_ = false;
@@ -57,6 +61,12 @@ end
 
 -- 触摸开始
 function SafeMapScene:on_touch_began(event)
+
+	local point = cc.p(event.x, event.y);
+    point = self.m_bg_map_:convertToNodeSpace(point);
+
+    self.m_player_direction_ = self.m_bg_map_:convertToWorldSpace(point);
+    self:start_player_move_action();
 	return true;
 end
 
@@ -95,7 +105,7 @@ function SafeMapScene:get_move_direction()
     local relust;
 
     local ptBegin = cc.p(self.m_player_:getPosition());
-    local ptEnd = cc.p(self.m_bg_map_:convertToNodeSpace(self.m_ptPlayerDirection));
+    local ptEnd = cc.p(self.m_bg_map_:convertToNodeSpace(self.m_player_direction_));
 
     local lenghtX = ptEnd.x - ptBegin.x;
     local lenghtY = ptEnd.y - ptBegin.y;
@@ -144,6 +154,37 @@ end
 
 function SafeMapScene:onExit()
 
+end
+
+function SafeMapScene:get_path_next_run_grid(begin_point, end_point)
+
+	local deque_map_point = AStarPath.get_path_by_use_a_star(self.m_bg_map_:get_map_grid(), self.m_bg_map_:get_map_row(), self.m_bg_map_:get_map_col(), begin_point, end_point);
+	local result = {};
+	table.insert(result, deque_map_point[1]);
+
+	while #deque_map_point > 3 do
+		table.remove(deque_map_point);
+	end
+
+	if #deque_map_point == 2 then
+		local p = deque_map_point[2];
+		table.insert(result, p);
+	elseif #deque_map_point > 2 then
+		local p1 = deque_map_point[2];
+		local p2 = deque_map_point[3];
+
+		if ToolUtil.equal_map_point(ToolUtil.sub(p2, deque_map_point[1]), ToolUtil.mul(ToolUtil.sub(p1, deque_map_point[1]), 2)) then
+			table.insert(result, p2);
+		else
+			table.insert(result, p1);
+		end
+	end
+
+    return relust
+end
+
+function SafeMapScene:insert_map_point(map_point)
+	-- body
 end
 
 return SafeMapScene;

@@ -5,6 +5,8 @@
 -- 创建个全局变量，就不需要requie文件
 ToolUtil = {};
 
+local MapPoint = require("app.map.MapPoint");
+
 function ToolUtil.message_box_animation(param)
 
 	-- 先获取初始位置和需要移动到的位置
@@ -17,8 +19,6 @@ function ToolUtil.message_box_animation(param)
 
 	-- 缩放指数
 	local scale = param.scale or 1;
-
-
 end
 
 function ToolUtil.get_z_order_zero(map_size)
@@ -27,54 +27,56 @@ end
 
 -- 赋值
 function ToolUtil.set(left, right)
-    left.x = right.x
-    left.z = right.z
-    return left
+    left.x = right.x;
+    left.y = right.y;
+    return left;
 end
 
 -- 相加
 function ToolUtil.add(left, right)
-    return ToolUtil.new(left.x + right.x, left.z + right.z)
+    return MapPoint.new(left.x + right.x, left.y + right.y);
 end
 
 -- 相减
 function ToolUtil.sub(left, right)
-    return ToolUtil.new(left.x - right.x, left.z - right.z)
+    return MapPoint.new(left.x - right.x, left.y - right.y);
 end
 
 -- 负号
-function ToolUtil.minus(self)
-    return ToolUtil.new(-self.x, -self.z)
+function ToolUtil.minus(m_point)
+    return MapPoint.new(-m_point.x, -m_point.y);
 end
 
 -- 乘以一个数
-function ToolUtil.mul(self, a)
-    return ToolUtil.new(self.x * a, self.z * a)
+function ToolUtil.mul(m_point, a)
+    return MapPoint.new(m_point.x * a, m_point.y * a);
 end
 
 -- 除以一个数
-function ToolUtil.div(self, a)
-    error(a, "CCPoint division by 0.");
-    return ToolUtil.new(self.x / a, self.z / a)
+function ToolUtil.div(m_point, a)
+    if a == 0 then
+        error(a, "CCPoint division by 0.");
+    end
+    return MapPoint.new(m_point.x / a, m_point.y / a);
 end
 
 -- 小于
 function ToolUtil.less(left, right)
-    local a = left.x * 65536 + left.z
-    local b = right.x * 65536 + right.z
-    return (a < b)
+    local a = left.x * 65536 + left.y;
+    local b = right.x * 65536 + right.y;
+    return (a < b);
 end
 
 -- 相等
 function ToolUtil.equals(left, right)
-    local a = left.x * 65536 + left.z
-    local b = right.x * 65536 + right.z
-    return (a == b)
+    local a = left.x * 65536 + left.y;
+    local b = right.x * 65536 + right.y;
+    return (a == b);
 end
 
 -- 对象值相等
 function ToolUtil.equal_map_point(left, right)
-    return (left.x == right.x and left.y == right.y)
+    return (left.x == right.x and left.y == right.y);
 end
 
 -- 寻路状态未在定义中
@@ -89,13 +91,13 @@ end
 -- 堆栈的操作
 -- 往堆栈里加入元素
 function ToolUtil.push_heap(array, first, last)
-    make(array, first, last);
+    ToolUtil.make_heap(array, first, last);
 end
 
 -- 往堆栈里弹出元素
 function ToolUtil.pop_heap(array, first, last)
     array[first], array[last] = array[last], array[first];
-    make_heap(array, first, last - 1);
+    ToolUtil.make_heap(array, first, last - 1);
 end
 
 -- 对A星寻路的堆栈进行筛选
@@ -125,6 +127,6 @@ end
 function ToolUtil.make_heap(array, first, last)
     local n = last - first + 1;
     for i = math.floor(n / 2), 1, -1 do
-        sift_heap(array, i, n);
+        ToolUtil.sift_heap(array, i, n);
     end
 end

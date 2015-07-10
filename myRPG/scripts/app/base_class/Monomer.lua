@@ -2,6 +2,8 @@
 -- 单体类，人物，动物之类的基类
 -- created by xianwx, 2015-07-06 09:24:48
 local Figure = require("app.base_class.Figure");
+local MapPoint = require("app.map.MapPoint");
+local scheduler = require("framework.scheduler");
 
 local Monomer = class("Monomer", function ()
 	return display.newSprite();
@@ -23,6 +25,8 @@ function Monomer:ctor()
 	self.m_texture_type_ = 0;
 
 	self.m_figure_ = nil;
+
+	self.m_update_vertex_y_ = 0;
 end
 
 function Monomer:onEnter()
@@ -77,68 +81,24 @@ function Monomer:set_figure_num_and_texture_type(figure_id, texture_type)
 	end
 end
 
-function Monomer:runBy(mpoint)
-    local pos = cc.p(self:getPosition())
-    local relust = MoveInfo.new(0.0, MapPoint.new(pos), false)
-
-    if (self.m_bIsCanMoved == false) then
-        return relust
-    end
-
-    local nState = self:getState()
-    if (nState == FigureState.Death or
-        nState == FigureState.Attack or
-        nState == FigureState.Caster or
-        nState == FigureState.Hurt) then
-        return relust
-    end
-
-    if (self:isMoveRunning()) then
-        return relust
-    end
-
-    self:stopActionByTag(TAG_MOVET)
-    self:stopActionByTag(TAG_FOLLOWATTACK)
-    self:stopActionByTag(TAG_COOLINGTIMEATTACK)
-
-    local mpos = MapPoint.new(pos)
-
-    local dequeMPoint = g_mainScene:getPathNextRunGrid(mpos, MapPoint.add(mpos, mpoint))
-
-    if (#dequeMPoint <= 1) then
-        self:stand()
-        relust.bIsCanNotFineTheWay = true
-        return relust
-    end
-
-    local array = self:actionsWithMoveTo(dequeMPoint)
-
-    local callFunc = cc.CallFunc:create(handler(self, self.moveByBegin))
-    local callFunc2 = cc.CallFunc:create(handler(self, self.moveByEnd))
-    array:insertObject(callFunc, 0)
-    array:addObject(callFunc2)
-
-    local sequence = cc.Sequence:create(array)
-    sequence:setTag(TAG_MOVET)
-    self:runAction(sequence)
-
-    relust.fTime = sequence:getDuration()
-    relust.mpoint = dequeMPoint[#dequeMPoint]
-
-    return relust
-end
-
 -- 是否在移动
 function Monomer:get_is_moving()
 	local pos = cc.p(self:getPosition());
 	local map_pos = MapPoint.new(pos);
-	return cc.PoingtDistance(map_pos:getCCPointValue(), pos) >= 5.0;
+	-- return cc.PointDistance(map_pos:get_cc_point_value(), pos) >= 5.0;
+	dump(map_pos, "map_pos: ");
+	dump(pos.x, "pos.x: ");
+	dump(pos.y, "pos.y: ");
+	dump(pos.z, "pos.z: ");
+	return false;
 end
 
 -- 以跑动的形式移动
 function Monomer:run_to_derection(move_direction)
 	local pos = cc.p(self:getPosition());
 	local result = { time = 0.0, map_point = MapPoint.new(pos), is_can_not_find_the_way = false };
+
+	print("is_moving: ", self:get_is_moving());
 
 	if self:get_is_moving() or
 	   self.m_state_ == FigureState.DEATH or
@@ -154,7 +114,105 @@ function Monomer:run_to_derection(move_direction)
 	-- self:stopActionByTag(TAG_FOLLOWATTACK);
 	-- self:stopActionByTag(TAG_COOLINGTIMEATTACK);
 
+    local map_point = MapPoint.new(pos.x, pos.y);
+
+    local deque_map_point = g_cur_map:get_path_next_run_grid(map_point, ToolUtil.add(map_point, move_direction));
+
+    print("#deque_map_point: ", #deque_map_point);
+
+    if (#deque_map_point <= 1) then
+        self:stand();
+        result.is_can_not_find_the_way = true;
+        return result;
+    end
+
+    local array = self:actions_with_move_to(deque_map_point);
+
+    local callback_func_begin = cc.CallFunc:create(handler(self, self.move_by_begin));
+    local callback_func_end = cc.CallFunc:create(handler(self, self.move_by_end));
+
+    array:insertObject(callback_func_begin, 0);
+    array:addObject(callback_func_end);
+
+    local sequence = cc.Sequence:create(array);
+    sequence:setTag(TAG_MOVET);
+    self:runAction(sequence);
+
+    result.float_time = sequence:getDuration();
+    result.map_point = deque_map_point[#deque_map_point];
+
 	return result;
+end
+
+function Monomer:stand()
+	-- body
+end
+
+function Monomer:actions_with_move_to(deque_map_point)
+	local array = CCArray:createWithCapacity(8);
+
+    if (#deque_map_point <= 1) then
+        return array;
+    end
+
+    local callfunc_start = cc.CallFunc:create(handler(self, self.start_timer_to_update_vertex_z));
+    local callfunc_kill = cc.CallFunc:create(handler(self, self.kill_timer_to_update_vertex_z));
+
+    array:addObject(callfunc_start);
+
+    for i = 2, #deque_map_point do
+        local startMPoint = deque_map_point[i - 1];
+        local endMPoint = deque_map_point[i];
+        array:addObjectsFromArray(self:actionsWithPoint(startMPoint, endMPoint));
+    end
+
+    array:addObject(callfunc_kill);
+
+    return array;
+end
+
+-- 启动更新y轴计时器
+function Monomer:start_timer_to_update_vertex_z()
+    self:kill_timer_to_update_vertex_z();
+    self.m_update_vertex_y_ = scheduler.scheduleGlobal(handler(self, self.update_vertex_z), 0.1);
+end
+
+-- 关闭更新y轴计时器
+function Monomer:kill_timer_to_update_vertex_z()
+    if (self.m_update_vertex_z_) then
+        scheduler.unscheduleGlobal(self.m_update_vertex_z_);
+        self.m_update_vertex_z_ = nil;
+    end
+end
+
+-- 更新y轴计时器回调函数
+function Monomer:update_vertex_z(delay)
+    local point = cc.p(self:getPosition());
+    local value = ToolUtil.get_z_order_zero(point); -- z轴
+
+    print("value: ", value);
+
+    self:setZOrder(value);
+
+    -- if (not self.m_nMonomer) then
+    --     return
+    -- end
+
+    -- if (g_mainScene:getCurrBgMap():getCurrentGridValue(MapPoint.new(point)) == 2) then
+    --     if (self.m_nMonomer:getOpacity() == 128) then
+    --         return
+    --     end
+
+    --     self.m_nMonomer:setOpacityEx(128)
+    --     self.m_nMonomer:setColor(ccc3(166,166,166))
+    -- else
+    --     if (self.m_nMonomer:getOpacity() == 255) then
+    --         return
+    --     end
+
+    --     self.m_nMonomer:setOpacityEx(255)
+    --     self.m_nMonomer:setColor(ccc3(255,255,255))
+    -- end
 end
 
 -- 以走动的形式移动
@@ -164,6 +222,14 @@ end
 
 -- 直接走到某个点
 function Monomer:go_to_point(aims_point)
+	-- body
+end
+
+function Monomer:move_by_begin()
+	-- body
+end
+
+function Monomer:move_by_end()
 	-- body
 end
 
@@ -200,6 +266,10 @@ end
 
 function Monomer:hide_and_clean_figure()
 
+end
+
+function Monomer:get_cur_state()
+	return self.m_state_;
 end
 
 return Monomer;

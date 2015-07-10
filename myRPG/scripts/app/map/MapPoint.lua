@@ -34,7 +34,7 @@ end
 -- 获取ccPoint的值
 function MapPoint:get_cc_point_value()
 	local point = cc.p(self.x * GRID_SIZE.width, self.y * GRID_SIZE.height);
-	return cc.PointAdd(point, cc.p(GRID_SIZE.width / 2, GRID_SIZE / 2));
+	return cc.PointAdd(point, cc.p(GRID_SIZE.width / 2, GRID_SIZE.height / 2));
 end
 
 function MapPoint:get_map_point_vector_for_distance(lenght)

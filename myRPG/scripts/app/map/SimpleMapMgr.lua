@@ -114,4 +114,18 @@ function SimpleMapMgr:get_map_sprite()
 	return self.m_map_sprite_;
 end
 
+-- 获取当前地图的格子
+function SimpleMapMgr:get_map_grid()
+	return self.m_map_grid_;
+end
+
+-- 获取当前地图的行数
+function SimpleMapMgr:get_map_row()
+	return self.m_grid_row_;
+end
+
+-- 获取当前地图的列数
+function SimpleMapMgr:get_map_col()
+	return self.m_grid_col_;
+end
 return SimpleMapMgr;

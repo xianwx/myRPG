@@ -27,33 +27,6 @@ function Player:onEnter()
 	Player.super().onEnter(self);
 end
 
-function Player:runBy(mpoint)
-    local relust = Player.super.runBy(self, mpoint)
-
-    if (relust.fTime ~= 0) then
-        g_mainScene:insterMapPoint(self, relust.mpoint)
-    end
-
-    if (relust.fTime == 0 and relust.bIsCanNotFineTheWay == false) then
-        self.m_willGoPoint = mpoint
-        self:stopActionByTag(TAG_MOVETWAIT)
-        self:delayCallBack(1 / 60.0, handler(self, self.waitRunBy)):setTag(TAG_MOVETWAIT)
-        return relust
-    end
-
-    if (self.m_isMoveActions == false) then
---        g_mainScene:getCurrBgMap():setTimer_UpdateMap()
---        self:setTimer_DetectionReplaceBgMap()
-        self.m_isMoveActions = true
-    end
-
-    return relust
-end
-
-function Player:waitRunBy()
-    self:runBy(self.m_willGoPoint)
-end
-
 -- 跑向某个方向
 function Player:run_to_derection(direction)
 	local result = Player.super.run_to_derection(self, direction);
@@ -61,6 +34,23 @@ function Player:run_to_derection(direction)
 	if not self.m_is_move_actions then
 		self.m_is_move_actions = true;
 	end
+
+	if result.float_time ~= 0 then
+		g_cur_map:insert_map_point(self, result.map_point);
+	end
+
+	if result.float_time == 0 and result.is_can_not_find_the_way == false then
+		self.m_will_go_point_ = direction;
+		self:stopActionByTag(TAB_MOVETWAIT);
+		self:delayCallBack(1 / 60.0, handler(self, self.wait_run_by)):setTag(TAB_MOVETWAIT);
+		return result;
+	end
+
+	return result;
+end
+
+function Player:wait_run_by()
+	self:run_to_derection(self.m_will_go_point_);
 end
 
 -- 走向某个方向

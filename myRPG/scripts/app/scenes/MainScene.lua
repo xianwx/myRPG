@@ -13,8 +13,6 @@ function MainScene:ctor()
 end
 
 function MainScene:onEnter()
-	GameData = nil;
-
 	if GameData ~= nil then
 		LoadingScene.start_loading("SafeMapScene");
 	else

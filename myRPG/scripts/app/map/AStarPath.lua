@@ -2,9 +2,10 @@
 -- 有关A*的一些路径获取的类
 -- created by xianwx, 2015-07-07 16:51:11
 
-local AStarSearch = class("AStarSearch");
+local AStarPath = class("AStarPath");
 local AStarPoint = class("AStarPoint");
 local MapSearchNode = class("MapSearchNode");
+local AStarSearch = require("app.map.AStarSearch");
 
 function AStarPoint:ctor(x, y)
 	self.x = x;
@@ -156,6 +157,8 @@ function AStarPath.get_a_star_point(begin_point, end_point)
 			search_step = search_step + 1;
 		until (search_state ~= SEARCH_STATE_SEARCHING);
 
+		print("search_state", search_state);
+
 		if search_state == SEARCH_STATE_SUCCEEDED then
 
 			-- todo 获取解集点还是状态还是点
@@ -172,6 +175,7 @@ function AStarPath.get_a_star_point(begin_point, end_point)
 		end
 	end
 
+	dump(point_table, "point_table");
 	return point_table;
 end
 

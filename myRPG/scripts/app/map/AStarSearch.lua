@@ -76,7 +76,7 @@ function AStarSearch:search_and_return_state()
 	self.m_steps_ = self.m_steps_ + 1;
 
 	local node = self.m_open_list_[1];
-	pop_heap(self.m_open_list_, 1, #self.m_open_list_);
+	ToolUtil.pop_heap(self.m_open_list_, 1, #self.m_open_list_);
 	table.remove(self.m_open_list_);
 
 	-- 已经找到了目标点

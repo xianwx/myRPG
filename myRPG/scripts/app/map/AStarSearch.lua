@@ -58,11 +58,13 @@ function AStarSearch:search_and_return_state()
 
 	-- 寻路状态未在定义中
 	if ToolUtil.a_star_search_state_no_define(self.m_state_) then
+		print("m_state_ in AStarSearch is no define: ", self.m_state_);
 		return self.m_state_;
 	end
 
 	-- 已经寻路完毕，成功或失败
 	if self.m_state_ == SEARCH_STATE_SUCCESSED or self.m_state_ == SEARCH_STATE_FAILED then
+		print("m_state_ in AStarSearch is end: ", self.m_state_);
 		return self.m_state_;
 	end
 
@@ -70,6 +72,7 @@ function AStarSearch:search_and_return_state()
 	if #self.m_open_list_ < 0 or self.m_cancel_search_ then
 		self:free_all_node();
 		self.m_state_ = SEARCH_STATE_FAILED;
+		print("m_state_ in AStarSearch is SEARCH_STATE_FAILED: ", self.m_state_);
 		return self.m_state_;
 	end
 
@@ -95,19 +98,21 @@ function AStarSearch:search_and_return_state()
 			until node_child == self.m_start_
 
 			self:free_all_unSearch_node();
-			self.m_state_ = SEARCH_STATE_SUCCEEDED;
+			self.m_state_ = SEARCH_STATE_SUCCESSED;
+			print("m_state_ in AStarSearch is SEARCH_STATE_SUCCESSED: ", self.m_state_);
 			return self.m_state_;
 		end
 	else
 
 		self.m_successors_ = {};
-		local ret = node.node_state:get_successors(self, (node.parent and node.parant.node_state or nil));
+		local ret = node.node_state:get_successors(self, (node.parent and node.parent.node_state or nil));
 		if not ret then
 
 			-- 清空所有successors，并清空缓存的node
 			self.m_successors_ = {};
 			self:free_all_node();
 			self.m_state_ = SEARCH_STATE_OUT_OF_MEMORY;
+			print("m_state_ in AStarSearch is SEARCH_STATE_OUT_OF_MEMORY: ", self.m_state_);
 			return self.m_state_;
 		end
 
@@ -150,7 +155,7 @@ function AStarSearch:search_and_return_state()
 				else
 					successor.parent = node;
 					successor.g = new_g;
-					successor.h = successor.node_state:goal_distance_estimate(self.end_node.node_state);
+					successor.h = successor.node_state:goal_distance_estimate(self.m_end_.node_state);
 					successor.f = successor.g + successor.h;
 
 					if close_list_result then
@@ -167,13 +172,16 @@ function AStarSearch:search_and_return_state()
 
 					table.insert(self.m_open_list_, successor);
 
-					push_heap(self.m_open_list_, 1, #self.m_open_list_);
+					ToolUtil.push_heap(self.m_open_list_, 1, #self.m_open_list_);
 				end
 			end
 		end
 
-		table.insert(self.m_close_list_);
+		table.insert(self.m_close_list_, node);
 	end
+
+	print("m_state_ in AStarSearch: ", self.m_state_);
+	return self.m_state_;
 end
 
 function AStarSearch:add_successor(state)

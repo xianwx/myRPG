@@ -6,6 +6,7 @@ local AStarPath = class("AStarPath");
 local AStarPoint = class("AStarPoint");
 local MapSearchNode = class("MapSearchNode");
 local AStarSearch = require("app.map.AStarSearch");
+local MapPoint = require("app.map.MapPoint");
 
 function AStarPoint:ctor(x, y)
 	self.x = x;
@@ -60,38 +61,40 @@ function MapSearchNode:get_successors(a_star_search, parent_node)
 	-- 左边
 	if AStarPath.get_map(self.x - 1, self.y) ~= DISORDER and not (parent_x == self.x - 1 and parent_y == self.y) then
 		new_node = MapSearchNode.new(self.x - 1, self.y);
-		--todo
+		a_star_search:add_successor(new_node);
 	end
 
 	-- 左下
 	if AStarPath.get_map(self.x - 1, self.y - 1) ~= DISORDER and not (parent_x == self.x - 1 and parent_y == self.y - 1) then
 		new_node = MapSearchNode.new(self.x - 1, self.y - 1);
-		--todo
+		a_star_search:add_successor(new_node);
 	end
 
 	-- 下边
 	if AStarPath.get_map(self.x, self.y - 1) ~= DISORDER and not (parent_x == self.x and parent_y == self.y - 1) then
 		new_node = MapSearchNode.new(self.x, self.y - 1);
-		--todo
+		a_star_search:add_successor(new_node);
 	end
 
 	-- 右下
 	if AStarPath.get_map(self.x + 1, self.y + 1) ~= DISORDER and not (parent_x == self.x + 1 and parent_y == self.y + 1) then
 		new_node = MapSearchNode.new(self.x + 1, self.y + 1);
-		--todo
+		a_star_search:add_successor(new_node);
 	end
 
 	-- 右边
 	if AStarPath.get_map(self.x + 1, self.y) ~= DISORDER and not (parent_x == self.x + 1 and parent_y == self.y) then
 		new_node = MapSearchNode.new(self.x + 1, self.y);
-		--todo
+		a_star_search:add_successor(new_node);
 	end
 
 	-- 右上
 	if AStarPath.get_map(self.x + 1, self.y + 1) ~= DISORDER and not (parent_x == self.x + 1 and parent_y == self.y + 1) then
 		new_node = MapSearchNode.new(self.x + 1, self.y + 1);
-		--todo
+		a_star_search:add_successor(new_node);
 	end
+
+	return true;
 end
 
 function AStarPath:ctor()
@@ -137,7 +140,7 @@ end
 
 -- 获得AStar的点
 function AStarPath.get_a_star_point(begin_point, end_point)
-	local point_table;
+	local point_table = {};
 
 	local a_star_search = AStarSearch.new();
 	local search_state = 1;
@@ -159,7 +162,7 @@ function AStarPath.get_a_star_point(begin_point, end_point)
 
 		print("search_state", search_state);
 
-		if search_state == SEARCH_STATE_SUCCEEDED then
+		if search_state == SEARCH_STATE_SUCCESSED then
 
 			-- todo 获取解集点还是状态还是点
 			local node = a_star_search:get_solution_start();
@@ -175,7 +178,6 @@ function AStarPath.get_a_star_point(begin_point, end_point)
 		end
 	end
 
-	dump(point_table, "point_table");
 	return point_table;
 end
 

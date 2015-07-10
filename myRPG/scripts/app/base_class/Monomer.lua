@@ -86,10 +86,6 @@ function Monomer:get_is_moving()
 	local pos = cc.p(self:getPosition());
 	local map_pos = MapPoint.new(pos);
 	-- return cc.PointDistance(map_pos:get_cc_point_value(), pos) >= 5.0;
-	dump(map_pos, "map_pos: ");
-	dump(pos.x, "pos.x: ");
-	dump(pos.y, "pos.y: ");
-	dump(pos.z, "pos.z: ");
 	return false;
 end
 
@@ -97,8 +93,6 @@ end
 function Monomer:run_to_derection(move_direction)
 	local pos = cc.p(self:getPosition());
 	local result = { time = 0.0, map_point = MapPoint.new(pos), is_can_not_find_the_way = false };
-
-	print("is_moving: ", self:get_is_moving());
 
 	if self:get_is_moving() or
 	   self.m_state_ == FigureState.DEATH or
@@ -167,6 +161,82 @@ function Monomer:actions_with_move_to(deque_map_point)
     end
 
     array:addObject(callfunc_kill);
+
+    return array;
+end
+
+function Monomer:actions_with_point(start_point, end_point)
+    local callFunc = nil;
+
+    local array = CCArray:create();
+
+    if (startMPoint:equalsObj(endMPoint)) then
+        return array;
+    end
+
+    local lenghtX = endMPoint.x - startMPoint.x;
+    local lenghtY = endMPoint.z - startMPoint.z;
+    local lenght = math.sqrt(lenghtX * lenghtX + lenghtY * lenghtY);
+
+    local gridNumber = startMPoint:getDistance(endMPoint);
+
+    local fTime = 0.6 * startMPoint:getDistance(endMPoint) / self.m_runSpeed / gridNumber;
+
+    local pointX = lenghtX / lenght;
+    local pointY = lenghtY / lenght;
+
+    local angle_X = math.acos(pointX) * 180 / math.pi;
+    local angle_Y = math.acos(pointY) * 180 / math.pi;
+
+    local angle = angle_X;
+    if (angle_Y > 90) then
+        angle = 360 - angle_X;
+    end
+
+    local nType = math.floor(((angle + 22.5) % 360 ) / 45.0);
+
+    if (lenght < 2) then
+        if (nType == 0) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkRight));
+        elseif (nType == 1) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkRightAndUp));
+        elseif (nType == 2) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkUp));
+        elseif (nType == 3) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkLeftAndUp));
+        elseif (nType == 4) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkLeft));
+        elseif (nType == 5) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkLeftAndDown));
+        elseif (nType == 6) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkDown));
+        elseif (nType == 7) then
+            callFunc = cc.CallFunc:create(handler(self, self.walkRightAndDown));
+        end
+    else
+        if (nType == 0) then
+            callFunc = cc.CallFunc:create(handler(self, self.runRight));
+        elseif (nType == 1) then
+            callFunc = cc.CallFunc:create(handler(self, self.runRightAndUp));
+        elseif (nType == 2) then
+            callFunc = cc.CallFunc:create(handler(self, self.runUp));
+        elseif (nType == 3) then
+            callFunc = cc.CallFunc:create(handler(self, self.runLeftAndUp));
+        elseif (nType == 4) then
+            callFunc = cc.CallFunc:create(handler(self, self.runLeft));
+        elseif (nType == 5) then
+            callFunc = cc.CallFunc:create(handler(self, self.runLeftAndDown));
+        elseif (nType == 6) then
+            callFunc = cc.CallFunc:create(handler(self, self.runDown));
+        elseif (nType == 7) then
+            callFunc = cc.CallFunc:create(handler(self, self.runRightAndDown));
+        end
+    end
+
+    array:addObject(callFunc);
+
+    local moveTo = cc.MoveTo:create(fTime, endMPoint:getCCPointValue());
+    array:addObject(moveTo);
 
     return array;
 end

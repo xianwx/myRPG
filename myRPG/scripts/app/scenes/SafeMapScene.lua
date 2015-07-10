@@ -180,7 +180,7 @@ function SafeMapScene:get_path_next_run_grid(begin_point, end_point)
 		end
 	end
 
-    return relust
+    return result
 end
 
 function SafeMapScene:insert_map_point(map_point)

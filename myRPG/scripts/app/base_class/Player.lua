@@ -6,6 +6,7 @@ local Player = class("Player", Monomer);
 
 function Player:ctor()
 	-- body
+	Player.super.ctor(self);
 end
 
 function Player:set_detail(figure_id, hair_id, weapon_id)
@@ -24,7 +25,7 @@ function Player:set_detail(figure_id, hair_id, weapon_id)
 end
 
 function Player:onEnter()
-	Player.super().onEnter(self);
+	Player.super.onEnter(self);
 end
 
 -- 跑向某个方向

@@ -157,7 +157,7 @@ function Monomer:actions_with_move_to(deque_map_point)
     for i = 2, #deque_map_point do
         local startMPoint = deque_map_point[i - 1];
         local endMPoint = deque_map_point[i];
-        array:addObjectsFromArray(self:actionsWithPoint(startMPoint, endMPoint));
+        array:addObjectsFromArray(self:actions_with_point(startMPoint, endMPoint));
     end
 
     array:addObject(callfunc_kill);
@@ -170,17 +170,17 @@ function Monomer:actions_with_point(start_point, end_point)
 
     local array = CCArray:create();
 
-    if (startMPoint:equalsObj(endMPoint)) then
+    if ToolUtil.equal_map_point(start_point, end_point) then
         return array;
     end
 
-    local lenghtX = endMPoint.x - startMPoint.x;
-    local lenghtY = endMPoint.z - startMPoint.z;
+    local lenghtX = end_point.x - start_point.x;
+    local lenghtY = end_point.y - start_point.y;
     local lenght = math.sqrt(lenghtX * lenghtX + lenghtY * lenghtY);
 
-    local gridNumber = startMPoint:getDistance(endMPoint);
-
-    local fTime = 0.6 * startMPoint:getDistance(endMPoint) / self.m_runSpeed / gridNumber;
+    local gridNumber = start_point:get_distance(end_point);
+    dump(self.m_direction_, "self.m_direction_: ");
+    local fTime = 0.6 * start_point:get_distance(end_point) / self.run_speed / gridNumber;
 
     local pointX = lenghtX / lenght;
     local pointY = lenghtY / lenght;
@@ -197,48 +197,147 @@ function Monomer:actions_with_point(start_point, end_point)
 
     if (lenght < 2) then
         if (nType == 0) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkRight));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_right));
         elseif (nType == 1) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkRightAndUp));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_right_up));
         elseif (nType == 2) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkUp));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_up));
         elseif (nType == 3) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkLeftAndUp));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_left_up));
         elseif (nType == 4) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkLeft));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_left));
         elseif (nType == 5) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkLeftAndDown));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_left_down));
         elseif (nType == 6) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkDown));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_down));
         elseif (nType == 7) then
-            callFunc = cc.CallFunc:create(handler(self, self.walkRightAndDown));
+            callFunc = cc.CallFunc:create(handler(self, self.walk_right_down));
         end
     else
         if (nType == 0) then
-            callFunc = cc.CallFunc:create(handler(self, self.runRight));
+            callFunc = cc.CallFunc:create(handler(self, self.run_right));
         elseif (nType == 1) then
-            callFunc = cc.CallFunc:create(handler(self, self.runRightAndUp));
+            callFunc = cc.CallFunc:create(handler(self, self.run_right_up));
         elseif (nType == 2) then
-            callFunc = cc.CallFunc:create(handler(self, self.runUp));
+            callFunc = cc.CallFunc:create(handler(self, self.run_up));
         elseif (nType == 3) then
-            callFunc = cc.CallFunc:create(handler(self, self.runLeftAndUp));
+            callFunc = cc.CallFunc:create(handler(self, self.run_left_up));
         elseif (nType == 4) then
-            callFunc = cc.CallFunc:create(handler(self, self.runLeft));
+            callFunc = cc.CallFunc:create(handler(self, self.run_left));
         elseif (nType == 5) then
-            callFunc = cc.CallFunc:create(handler(self, self.runLeftAndDown));
+            callFunc = cc.CallFunc:create(handler(self, self.run_left_down));
         elseif (nType == 6) then
-            callFunc = cc.CallFunc:create(handler(self, self.runDown));
+            callFunc = cc.CallFunc:create(handler(self, self.run_down));
         elseif (nType == 7) then
-            callFunc = cc.CallFunc:create(handler(self, self.runRightAndDown));
+            callFunc = cc.CallFunc:create(handler(self, self.run_right_down));
         end
     end
 
     array:addObject(callFunc);
 
-    local moveTo = cc.MoveTo:create(fTime, endMPoint:getCCPointValue());
+    local moveTo = cc.MoveTo:create(fTime, end_point:get_cc_point_value());
     array:addObject(moveTo);
 
     return array;
+end
+
+-- 走到右边
+function Monomer:walk_right()
+    self:set_figure_state(FigureState.WALK, FigureDirection.RIGHT);
+end
+
+-- 跑到右边
+function Monomer:run_right()
+    self:set_figure_state(FigureState.RUN, FigureDirection.RIGHT);
+end
+
+-- 走到右上
+function Monomer:walk_right_up()
+    self:set_figure_state(FigureState.WALK, FigureDirection.RIGHTANDUP);
+end
+
+-- 跑到右上
+function Monomer:run_right_up()
+    self:set_figure_state(FigureState.RUN, FigureDirection.RIGHTANDUP);
+end
+
+-- 走到上边
+function Monomer:walk_up()
+    self:set_figure_state(FigureState.WALK, FigureDirection.UP);
+end
+
+-- 跑到上边
+function Monomer:run_up()
+    self:set_figure_state(FigureState.RUN, FigureDirection.UP);
+end
+
+-- 走到左上
+function Monomer:walk_left_up()
+   self:set_figure_state(FigureState.WALK, FigureDirection.LEFTANDUP);
+end
+
+-- 跑到左上
+function Monomer:run_left_up()
+    self:set_figure_state(FigureState.RUN, FigureDirection.LEFTANDUP);
+end
+
+-- 走到左边
+function Monomer:walk_left()
+    self:set_figure_state(FigureState.WALK, FigureDirection.LEFT);
+end
+
+-- 跑到左边
+function Monomer:run_left()
+    self:set_figure_state(FigureState.RUN, FigureDirection.LEFT);
+end
+
+-- 走到左下
+function Monomer:walk_left_down()
+    self:set_figure_state(FigureState.WALK, FigureDirection.LEFTANDDOWN);
+end
+
+-- 跑到左下
+function Monomer:run_left_down()
+    self:set_figure_state(FigureState.RUN, FigureDirection.LEFTANDDOWN);
+end
+
+-- 走到下边
+function Monomer:walk_down()
+    self:set_figure_state(FigureState.WALK, FigureDirection.DOWN);
+end
+
+-- 跑到下边
+function Monomer:run_down()
+    self:set_figure_state(FigureState.RUN, FigureDirection.DOWN);
+end
+
+-- 走到右下
+function Monomer:walk_right_down()
+    self:set_figure_state(FigureState.WALK, FigureDirection.RIGHTANDDOWN);
+end
+
+-- 跑到右下
+function Monomer:run_right_down()
+    self:set_figure_state(FigureState.RUN, FigureDirection.RIGHTANDDOWN);
+end
+
+-- 设置人物状态
+function Monomer:set_figure_state(state, direction)
+    if (self.m_state_ == FigureState.DEATH) then
+        return;
+    end
+
+    if (state ~= FigureState.NONE) then
+        self.m_state_ = state;
+    end
+
+    if (direction ~= FigureDirection.NONE) then
+        self.m_direction_ = direction;
+    end
+
+    if (self.m_figure_) then
+        self.m_figure_:set_direction_and_state(state, direction);
+    end
 end
 
 -- 启动更新y轴计时器
@@ -258,7 +357,7 @@ end
 -- 更新y轴计时器回调函数
 function Monomer:update_vertex_z(delay)
     local point = cc.p(self:getPosition());
-    local value = ToolUtil.get_z_order_zero(point); -- z轴
+    local value = ToolUtil.get_z_order(point); -- z轴
 
     print("value: ", value);
 

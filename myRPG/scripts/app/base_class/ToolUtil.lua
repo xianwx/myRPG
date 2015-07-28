@@ -21,6 +21,10 @@ function ToolUtil.message_box_animation(param)
 	local scale = param.scale or 1;
 end
 
+function ToolUtil.get_z_order(point)
+    return (-point.y / 10.0)
+end
+
 function ToolUtil.get_z_order_zero(map_size)
 	return (-map_size.height / 10.0);
 end
